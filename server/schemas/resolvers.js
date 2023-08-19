@@ -53,8 +53,8 @@ const resolvers = {
              }, { new: true });
         },
 
-        updateUserEmail: async (parent, args, context) => {
-            return await User.findByIdAndUpdate( context.user._id , args , { new: true });
+        updateUserEmail: async (parent, {email}, context) => {
+            return await User.findByIdAndUpdate( context.user._id , {$set:{email:email}} , { new: true });
         },
 
         updateUserPassword: async (parent, { password }, context) => {
@@ -62,6 +62,10 @@ const resolvers = {
             password = hashedPassword;
 
             return await User.findByIdAndUpdate(context.user._id, {$set:{password:password}}, { new: true });
+        },
+
+        updateHostStatus: async (parent, {isHost}, context) => {
+            return await User.findByIdAndUpdate(context.user._id, {$set:{isHost:isHost}}, {new:true});
         }
     }
 }

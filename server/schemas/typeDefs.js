@@ -8,6 +8,7 @@ const typeDefs = gql`
         lastName: String
         email: String
         password: String
+        isHost: Boolean
     },
 
     type Query{
@@ -26,6 +27,7 @@ const typeDefs = gql`
         updateUserName(firstName:String, lastName:String):User
         updateUserEmail(email:String!):User
         updateUserPassword(password:String!):User
+        updateHostStatus(isHost:Boolean!): User
         login(email:String!, password:String!): Auth
     }
 `
