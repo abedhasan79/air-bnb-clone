@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-
 const {Schema} = mongoose;
 const bcrypt = require("bcrypt");
+const Listings = require('./listings');
 
 const userSchema = new Schema({
     firstName:{
@@ -31,6 +31,11 @@ const userSchema = new Schema({
     isHost:{
         type: Boolean,
         default: false
+    },
+
+    listings:{
+        type: [Schema.Types.ObjectId],
+        ref: "Listings"
     }
 })
 
