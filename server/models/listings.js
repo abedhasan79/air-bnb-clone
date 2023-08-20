@@ -44,6 +44,11 @@ const listingSchema = new Schema({
     images:{
         type: [String],
         required: true
+    },
+    
+    reservations:{
+        type: [Schema.Types.ObjectId],
+        ref: "Reservation"
     }
 })
 

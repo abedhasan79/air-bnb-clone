@@ -10,7 +10,8 @@ const typeDefs = gql`
         password: String
         isHost: Boolean
         listings:[Listings]
-    },
+        reservations: [Reservation]
+    }
 
     type Listings{
         _id:ID
@@ -22,13 +23,27 @@ const typeDefs = gql`
         pricePerNight: Float
         amenities: [String]
         images: [String]
+        reservations: [Reservation]
+    }
+
+    type Reservation{
+        _id: ID
+        listing: Listings
+        guest: User
+        checkInDate: String
+        checkOutDate: String
+        status: String
     }
 
     type Query{
         users: [User]
         user: User
+
         listings: [Listings]
         listing(_id:ID!): Listings
+
+        reservations:[Reservation]
+        reservation(_id: ID!): Reservation
     }
 
     type Auth {
@@ -52,6 +67,9 @@ const typeDefs = gql`
         updateListingAmenities(_id:ID!, amenities:[String]!): Listings
         updateListingImage(_id:ID!, images:[String]!): Listings
         addListingImage(_id:ID!, images:[String]!): Listings
+
+        makeReservation(listing:ID!, checkInDate:String!, checkOutDate:String!): Reservation
+        updateReservationStatus(_id:ID! ,status:String!): Reservation
     }
 `
 module.exports = typeDefs;

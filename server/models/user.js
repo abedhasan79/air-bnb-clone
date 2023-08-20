@@ -36,6 +36,11 @@ const userSchema = new Schema({
     listings:{
         type: [Schema.Types.ObjectId],
         ref: "Listings"
+    },
+
+    reservations:{
+        type: [Schema.Types.ObjectId],
+        ref: "Reservation"
     }
 })
 
