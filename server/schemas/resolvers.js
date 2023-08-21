@@ -1,9 +1,10 @@
 const { ObjectId } = require("mongodb");
-const { User, Listings, Reservation } = require("../models");
+const { User, Listings, Reservation, Review } = require("../models");
 const { AuthenticationError } = require('apollo-server-express');
 const { signToken } = require("../utils/auth");
 
 const bcrypt = require('bcrypt');
+
 
 const resolvers = {
     Query: {
@@ -25,12 +26,41 @@ const resolvers = {
             return await Listings.findById(_id);
         },
 
+        listingsArray: async (parent, { _id }) => {
+            // console.log(_id);
+            const arrayOfIds = _id.map((id) => {return new ObjectId(id)});
+            // console.log(arrayOfIds)
+            const queryListArray = await Listings.find({ _id: { $in: arrayOfIds } });
+            // console.log(queryListArray);
+            return queryListArray;
+        },
+
         reservations: async (parent, args) => {
             return await Reservation.find();
         },
 
-        reservation: async (parent, {_id}) => {
+        reservation: async (parent, { _id }) => {
             return await Reservation.findById(_id);
+        },
+
+        reservationsArray: async (parent, {_id}) => {
+            const arrayOfIds = _id.map((id) => {return new ObjectId(id)});
+            const queryReservationArray = await Reservation.find({ _id: { $in: arrayOfIds } });
+            return queryReservationArray;
+        },
+
+        reviews: async (parent, args) => {
+            return await Review.find();
+        },
+
+        review: async (parent, { _id }) => {
+            return await Review.findById(_id);
+        },
+
+        reviewsArray: async (parent, {_id}) => {
+            const arrayOfIds = _id.map((id) => {return new ObjectId(id)});
+            const queryReviewsArrayArray = await Review.find({ _id: { $in: arrayOfIds } });
+            return queryReviewsArrayArray;
         }
     },
 
@@ -151,30 +181,46 @@ const resolvers = {
             }
         },
 
-        makeReservation: async (parent, args, context) =>{
-            if(context.user){
+        makeReservation: async (parent, args, context) => {
+            if (context.user) {
                 args.guest = context.user._id;
-                
+
                 const reservation = await Reservation.create(args);
 
-                await User.findByIdAndUpdate(context.user._id,{
-                    $push:{reservations: reservation._id}
+                await User.findByIdAndUpdate(context.user._id, {
+                    $push: { reservations: reservation._id }
                 });
 
-                await Listings.findByIdAndUpdate(args.listing,{
-                    $push:{reservations: reservation}
+                await Listings.findByIdAndUpdate(args.listing, {
+                    $push: { reservations: reservation }
                 });
 
                 return reservation;
             }
         },
 
-        updateReservationStatus: async (parent, {_id, status}, context)=>{
-            if(context.user.isHost){
-                return await Reservation.findByIdAndUpdate(_id,{
-                    $set:{status:status}
-                }, {new:true});
+        updateReservationStatus: async (parent, { _id, status }, context) => {
+            if (context.user.isHost) {
+                return await Reservation.findByIdAndUpdate(_id, {
+                    $set: { status: status }
+                }, { new: true });
             }
+        },
+
+        addReview: async (parent, args, context) => {
+            args.guest = context.user._id;
+
+            const review = await Review.create(args);
+
+            await User.findByIdAndUpdate(context.user._id,{
+                $push:{reviews: review._id}
+            });
+
+            await Listings.findByIdAndUpdate(args.listing, {
+                $push:{reviews: review._id}
+            });
+
+            return review;
         }
     }
 }

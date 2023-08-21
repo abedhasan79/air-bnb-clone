@@ -45,10 +45,15 @@ const listingSchema = new Schema({
         type: [String],
         required: true
     },
-    
+
     reservations:{
         type: [Schema.Types.ObjectId],
         ref: "Reservation"
+    },
+
+    reviews:{
+        type: [Schema.Types.ObjectId],
+        ref:"Review"
     }
 })
 

@@ -11,6 +11,7 @@ const typeDefs = gql`
         isHost: Boolean
         listings:[Listings]
         reservations: [Reservation]
+        reviews:[Review]
     }
 
     type Listings{
@@ -24,6 +25,7 @@ const typeDefs = gql`
         amenities: [String]
         images: [String]
         reservations: [Reservation]
+        reviews:[Review]
     }
 
     type Reservation{
@@ -35,15 +37,29 @@ const typeDefs = gql`
         status: String
     }
 
+    type Review{
+        _id:ID
+        listing: Listings
+        guest: User
+        rating: Int
+        comment: String
+    }
+
     type Query{
         users: [User]
         user: User
 
         listings: [Listings]
         listing(_id:ID!): Listings
+        listingsArray(_id:[ID]!): [Listings]
 
         reservations:[Reservation]
         reservation(_id: ID!): Reservation
+        reservationsArray(_id: [ID]!): [Reservation]
+
+        reviews: [Review]
+        review(_id:ID!): Review
+        reviewsArray(_id:[ID]!): [Review]
     }
 
     type Auth {
@@ -70,6 +86,8 @@ const typeDefs = gql`
 
         makeReservation(listing:ID!, checkInDate:String!, checkOutDate:String!): Reservation
         updateReservationStatus(_id:ID! ,status:String!): Reservation
+
+        addReview(listing:ID!, rating: Int!, comment: String!): Review
     }
 `
 module.exports = typeDefs;
